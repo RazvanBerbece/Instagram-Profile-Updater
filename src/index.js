@@ -6,7 +6,7 @@ const ClientImp = require('./Classes/Client/client');
 const express = require('express');
 
 /** --------------------------- APP INITS --------------------------- */
-const port = 5001;
+const port = process.env.PORT || 3000;
 const app = express();
 const client = new ClientImp(
   process.env.TOKEN, // Long-lived Access Token
