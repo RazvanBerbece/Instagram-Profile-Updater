@@ -8,6 +8,7 @@
 
 /** --------------------------- REQUIRES --------------------------- */
 const axios = require('axios');
+const dateTime = require('node-datetime');
 
 class Client {
 
@@ -80,7 +81,7 @@ class Client {
      * 
      * Callback => finish app run (reply with new metrics)
     */
-    deleteComment(commentID, callback) {
+    deleteComment(commentID) {
         const _this = this;
         // get current metrics comment data (reply to comment with commentID)
         axios.get(this.baseLink + `/${commentID}` + '/replies' + `?access_token=${this.token}`)
@@ -95,44 +96,54 @@ class Client {
                         axios.delete(_this.baseLink + `/${response.data.mentioned_comment.id}` + `?access_token=${_this.token}`)
                         .then(function (deleteResult) {
                             if (deleteResult.data.success == true) {
-                                callback(deleteResult.data.success); // media access is index based
+                                // console.log('Reply deleted.');
                             }
                             else {
-                                callback(0);
+                                // console.log("Deleting failed.");
                             }
                         })
                         .catch(function (err) {
                             console.log(err);
-                            callback(0);
                         })
                     }
                 })
                 .catch(function (err) {
                     console.log(err);
-                    return;
                 })
             });
         })
         .catch(function (err) {
             console.log(err);
-            callback(0);
         })
     }
 
     /**
-     * Replies to the main comment with the updated metrics
+     * Replies to the main comment with the updated metrics (PINNED COMMENT if possible)
      * 
      * callback => end execution of app
      */
-    replyWithMetrics(likeCount, callback) {
-        // reply to main comment
-        axios.post(this.baseLink + `/${this.initialCommentID}` + `/replies?message=@_mildlyinterestingstuff_ Likes : ${likeCount}` + `&access_token=${this.token}`)
+    replyWithMetrics(likeCount) {
+
+        var dt = dateTime.create();
+        var formatted = dt.format('Y-m-d H:M:S');
+
+        const URI = this.baseLink + 
+        `/${this.initialCommentID}` + 
+        `/replies?message=@_mildlyinterestingstuff_ 
+    
+        On ${formatted}
+        This photo has ${likeCount} ${(likeCount == 0 || likeCount > 1) ? "likes" : "like"} \u{1F49C}
+        
+        ` + 
+        `&access_token=${this.token}`;
+        const encodedURI = encodeURI(URI);
+    
+        axios.post(encodedURI)
         .then(function (response) {
-            callback(response.data); // media access is index based
+            console.log('Reply updated.');
         })
         .catch(function (err) {
             console.log(err);
-            callback(0);
         })
     }
 
@@ -148,23 +159,15 @@ class Client {
                     if (media) { // second step successful
                         this.getMediaDataByID(media.data[0].id, (mediaData) => {
                             if (mediaData) { // third step successful
-                                this.deleteComment(mediaData.comments.data[0].id, (deleteData) => {
-                                    if (deleteData) { // fourth step successful
-                                        this.replyWithMetrics(mediaData.like_count, (replyData) => {
-                                            if (replyData) { // final step successful
-                                                callback();
-                                            }
-                                            else {
-                                                console.log('replyWithMetrics() error.');
-                                                callback();
-                                            }
-                                        })
-                                    }
-                                    else {
-                                        console.log('deleteComment() error.');
-                                        callback();
-                                    }
+                                var promise_delete = this.deleteComment(mediaData.comments.data[0].id);
+                                var promise_reply = this.replyWithMetrics(mediaData.like_count);
+                                Promise.all([promise_delete, promise_reply])
+                                .then(() => {
+                                    callback()
                                 })
+                                .catch(() => {
+                                    callback();
+                                });
                             }
                             else {
                                 console.log('getMediaDataByID() error.');

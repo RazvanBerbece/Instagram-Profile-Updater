@@ -1,7 +1,7 @@
 # Instagram-Profile-Updater
+Project built in JS (NodeJS), which uses IGs API in order to query a specific post off a business profile and automatically update a comment with the post metrics (likes, views etc).
 
 ## Summary
-
 Project built in JavaScript (using Node.JS) that based on a Business Instagram Profile media objects (eg: a video) statistics (like count, views, comments etc.), updates a specific reply with the current metrics of the specified media object.
 
 This leads to a behaviour of a continuous automated update of the metrics (no user action required).
