@@ -24,7 +24,7 @@ app.listen(port, () => {
       client.runApp(() => {
         // NOTHING HERE -- SILENCE UnhandledPromiseRejectionWarning
       });
-    }, 15 * 1000);
+    }, 20 * 1000);
   });
 });
 
