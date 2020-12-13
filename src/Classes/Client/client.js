@@ -140,7 +140,7 @@ class Client {
     
         axios.post(encodedURI)
         .then(function (response) {
-            console.log('Reply updated.');
+            // console.log('Reply updated.');
         })
         .catch(function (err) {
             console.log(err);
