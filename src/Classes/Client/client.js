@@ -124,6 +124,14 @@ class Client {
      */
     replyWithMetrics(likeCount) {
 
+        // random emoji picker
+        const emojiList = ["\u{1F49C}", "\u{1F600}", "\u{1F911}", "\u{1F9E1}",
+            "\u{1F49B}", "\u{1F49A}", "\u{1F499}", "\u{1F90E}", "\u{1F5A4}",
+            "\u{1F90D}", "\u{1F4AF}", "\u{1F4AB}", "\u{1F4A3}"
+        ];
+        const randomEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+
+        // datetime
         var dt = dateTime.create();
         var formatted = dt.format('Y-m-d H:M:S');
 
@@ -132,7 +140,7 @@ class Client {
         `/replies?message=@_mildlyinterestingstuff_ 
     
         On ${formatted}
-        This photo has ${likeCount} ${(likeCount == 0 || likeCount > 1) ? "likes" : "like"} \u{1F49C}
+        This photo has ${likeCount} ${(likeCount == 0 || likeCount > 1) ? "likes" : "like"} ${randomEmoji}
         
         ` + 
         `&access_token=${this.token}`;
