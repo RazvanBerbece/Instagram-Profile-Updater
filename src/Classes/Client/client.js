@@ -18,6 +18,7 @@ class Client {
         this.basePageID = basePageID; // the id of the business page (used for testing and checking)
         this.businessProfileID = businessProfileID; // id of the IG business profile
         this.initialCommentID = initialCommentID; // id of main comment
+        this.lastLikeCount = -1; // will save the latest like count to check if write requests have to be made
     }
 
     /** 
@@ -167,15 +168,22 @@ class Client {
                     if (media) { // second step successful
                         this.getMediaDataByID(media.data[0].id, (mediaData) => {
                             if (mediaData) { // third step successful
-                                var promise_delete = this.deleteComment(mediaData.comments.data[0].id);
-                                var promise_reply = this.replyWithMetrics(mediaData.like_count);
-                                Promise.all([promise_delete, promise_reply])
-                                .then(() => {
-                                    callback()
-                                })
-                                .catch(() => {
+                                if (mediaData.like_count != this.lastLikeCount) {
+                                    this.lastLikeCount = mediaData.like_count;
+                                    var promise_delete = this.deleteComment(mediaData.comments.data[0].id);
+                                    var promise_reply = this.replyWithMetrics(mediaData.like_count);
+                                    Promise.all([promise_delete, promise_reply])
+                                    .then(() => {
+                                        callback()
+                                    })
+                                    .catch(() => {
+                                        callback();
+                                    });
+                                }
+                                else {
+                                    console.log("On pause.");
                                     callback();
-                                });
+                                }
                             }
                             else {
                                 console.log('getMediaDataByID() error.');

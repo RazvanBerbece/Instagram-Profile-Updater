@@ -18,13 +18,17 @@ const client = new ClientImp(
 /** --------------------------- SERVER RUN --------------------------- */
 app.listen(port, () => {
   console.log(`Server listening on ${port} ...`);
+  // set a random interval to repeat function on (perhaps it helps with a more randomised approach ?)
+  timers = [60, 70, 72, 66, 77, 75]; // a few random timer intervals
+  var randomTimer = timers[Math.floor(Math.random() * timers.length)];  
   // timed app run
   client.runApp(() => {
     setInterval(function() {
       client.runApp(() => {
-        // NOTHING HERE -- SILENCE UnhandledPromiseRejectionWarning
+        // get a new random timer value
+        randomTimer = timers[Math.floor(Math.random() * timers.length)];  
       });
-    }, 45 * 1000);
+    }, randomTimer * 1000);
   });
 });
 
