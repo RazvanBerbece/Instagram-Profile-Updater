@@ -1,18 +1,21 @@
-/** --------------------------- DOTENV INIT --------------------------- */
-require('dotenv').config();
+/** --------------------------- YENV INIT --------------------------- */
+const yenv = require('yenv');
+
+// You can call it with a filename, too.
+const env = yenv(`${__dirname}/../app.yaml`, { env: 'production' })
 
 /** --------------------------- REQUIRES --------------------------- */
 const ClientImp = require('./Classes/Client/client');
 const express = require('express');
 
 /** --------------------------- APP INITS --------------------------- */
-const port = process.env.PORT || 3000;
+const port = 3000;
 const app = express();
 const client = new ClientImp(
-  process.env.TOKEN, // Long-lived Access Token
-  process.env.BASE_PAGE_ID, // FB Business Page
-  process.env.BUSINESS_IG_ID, // IG Business Page
-  process.env.INITIAL_COMMENT_ID // updates will be replied to this
+  env.TOKEN, // Long-lived Access Token
+  env.BASE_PAGE_ID, // FB Business Page
+  env.BUSINESS_IG_ID, // IG Business Page
+  env.INITIAL_COMMENT_ID // updates will be replied to this
   ); 
 
 /** --------------------------- SERVER RUN --------------------------- */

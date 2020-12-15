@@ -8,6 +8,7 @@
 
 /** --------------------------- REQUIRES --------------------------- */
 const axios = require('axios');
+const { response } = require('express');
 const dateTime = require('node-datetime');
 
 class Client {
@@ -32,7 +33,7 @@ class Client {
         var _this = this; // solution to this in .then, as gets lost in the callback
         axios.get(this.baseLink + `/${this.basePageID}` + '?fields=name' + `&access_token=${this.token}`)
         .then(function (response) { // call success handler
-            if (_this.basePageID === response.data.id) {
+            if (_this.basePageID == response.data.id) {
                 return callback(1); // Instagram Graph API working properly
             }
             else {
