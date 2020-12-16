@@ -11,9 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.0",
+    "env-app-yaml": "^1.0.0",
     "express": "^4.17.1",
-    "node-datetime": "^2.1.2",
-    "yenv": "^2.1.1"
+    "node-datetime": "^2.1.2"
   },
   "engines": {
     "node": "14.4.0"
