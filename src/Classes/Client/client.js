@@ -12,12 +12,13 @@ const { response } = require("express");
 const dateTime = require("node-datetime");
 
 class Client {
-  constructor(token, basePageID, businessProfileID, initialCommentID) {
-    this.baseLink = "https://graph.facebook.com/v9.0";
+  constructor(token, basePageID, businessProfileID, mainPostID, initialCommentID) {
+    this.baseLink = "https://graph.facebook.com/v10.0";
     this.token = token; // long-term access token (2 months) --- SHOULD FIND A WAY TO REFRESH EVERY 2 MONTHS
     this.basePageID = basePageID; // the id of the business page (used for testing and checking)
     this.businessProfileID = businessProfileID; // id of the IG business profile
     this.initialCommentID = initialCommentID; // id of main comment
+    this.mainPostID = mainPostID; // id of media posting (the photo which has the bot attached to it)
     this.lastLikeCount = 32; // will save the latest like count (random choice 29) to check if write requests have to be made
   }
 
@@ -58,15 +59,21 @@ class Client {
    * Callback => third step in app run (get required media object)
    */
   getIGProfile(callback) {
+    const _this = this;
     axios
       .get(
         this.baseLink +
           `/${this.businessProfileID}` +
-          "?fields=name,media,id" +
+          "?fields=media" +
           `&access_token=${this.token}`
       )
       .then(function (response) {
-        callback(response.data.media); // media access is index based
+        const mediaIDS = response.data.media.data;
+        for (var i = 0; i < mediaIDS.length; i++) {
+          if (mediaIDS[i].id == _this.mainPostID) {
+            callback(mediaIDS[i].id); // return id of post
+          }
+        }
       })
       .catch(function (err) {
         console.log(err);
@@ -236,7 +243,7 @@ class Client {
         this.getIGProfile((media) => {
           if (media) {
             // second step successful
-            this.getMediaDataByID(media.data[0].id, (mediaData) => {
+            this.getMediaDataByID(media, (mediaData) => {
               if (mediaData) {
                 // third step successful
                 if (mediaData.like_count != this.lastLikeCount) {

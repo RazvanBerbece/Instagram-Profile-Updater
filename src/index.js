@@ -12,6 +12,7 @@ const client = new ClientImp(
   process.env.TOKEN, // Long-lived Access Token
   process.env.BASE_PAGE_ID, // FB Business Page
   process.env.BUSINESS_IG_ID, // IG Business Page
+  process.env.MAIN_POST_ID, // IG Media Post ID (photo where comment with bot can be found)
   process.env.INITIAL_COMMENT_ID // updates will be replied to this
   ); 
 
@@ -19,7 +20,7 @@ const client = new ClientImp(
 app.listen(port, () => {
   console.log(`Server listening on ${port} ...`);
   // set a random interval to repeat function on (perhaps it helps with a more randomised approach ?)
-  timers = [60, 70, 72, 66, 77, 75]; // a few random timer intervals
+  timers = [40, 60, 70, 72, 66, 77, 75]; // a few random timer intervals
   var randomTimer = timers[Math.floor(Math.random() * timers.length)];  
   // timed app run
   client.runApp(() => {
